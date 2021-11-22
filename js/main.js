@@ -17,7 +17,7 @@ const boardLookup = {
 
 /*----- app's state (variables) -----*/
 // Define constants: board size, number of mines
-let board, winner, difficulty, numOfMines, boardSize, mineTiles, flagTiles;
+let board, playerWin, difficulty, numOfMines, boardSize, mineTiles, flagTiles, time;
 
 /*----- cached element references -----*/
 // Cached elements: timer, num of mines, board, message
@@ -59,11 +59,14 @@ gameBoard.on('contextmenu', 'div', function() {
 
 function init() {
     board = [];
+    time = boardSize * boardSize * 2;
     generateBoard(boardSize);
     generateBombs();
     generateNumberedTiles();
     generateFlagTiles();
     updateNumberOfMines();
+    updateTimer();
+    startTimer();
     renderBoard();
 }
 
@@ -80,6 +83,10 @@ function updateNumberOfMines() {
     numOfMinesScreen.text(numOfMines);
 }
 
+function updateTimer() {
+    timer.text(time);
+}
+
 function generateBombs() {
     mineTiles = {};
     let mineTilesLength = 0;
@@ -93,6 +100,7 @@ function generateBombs() {
         col = Math.floor(Math.random() * boardSize);
         if ( !mineTiles[row].some(num => num === col) ) {
             mineTiles[row].push(col);
+            mineTiles[row].sort();
         }
         mineTilesLength = 0; 
         for ( let i = 0; i < boardSize; i++ ) {
@@ -154,6 +162,17 @@ function addNumber(row, col) {
     }
 }
 
+function startTimer() {
+    if ( time === 0 ) {
+
+    }
+    setTimeout(() => {
+        time--;
+        updateTimer();
+        startTimer();
+    }, 1000);
+}
+
 function renderBoard() {
     let boardHTML = '';
     for ( let i = 0; i < boardSize; i++ ) {
@@ -176,18 +195,17 @@ function openTile(tile) {
     if ( tile.length === 0 ) return;
     const tileClass = tile.attr('class').split(' ');
     const tileType = tileClass[0];
-    const tilePos = tile.attr('class').split(' ')[1].split('-');
-    const row = parseInt(tilePos[0]), col = parseInt(tilePos[1]);
+    const pos = getTilePos(tile);
     
     if ( tileClass.find(elem => elem === 'open' || elem === 'flagged')) return;
     
     if ( tileType === 'mine' ) {
-        triggerMine();
+        triggerMine(tile);
     }
 
     if ( tileType === 'empty' ) {
         tileOpenHandler(tile);
-        openAdjacentTiles([row, col]);
+        openAdjacentTiles(pos);
         return;
     }
     tileOpenHandler(tile);
@@ -195,7 +213,7 @@ function openTile(tile) {
 
 function tileOpenHandler(tile) {
     tile.removeClass('hidden');
-    tile.attr('class', tile.attr('class').split(' ')[0] + ' open');
+    tile.addClass('open');
 }
 
 function openAdjacentTiles(pos) {
@@ -218,8 +236,8 @@ function openAdjacentTiles(pos) {
 function flagTile(tile) {
     const tileClass = tile.attr('class');
     if ( tileClass.split(' ')[1] === 'open' ) return;
-    const tilePos = tileClass.split(' ')[1].split('-');
-    const row = parseInt(tilePos[0]), col = parseInt(tilePos[1]);
+    const pos = getTilePos(tile);
+    const row = pos[0], col = pos[1];
     if ( flagTiles[row].find(elem => elem === col) ){
         numOfMines++;
         flagTiles[row] = flagTiles[row].filter(elem => {
@@ -228,14 +246,60 @@ function flagTile(tile) {
     }
     else {
         flagTiles[row].push(col);
+        flagTiles[row].sort();
         numOfMines--;
     }
     tile.toggleClass('flagged');
+    if ( numOfMines === 0 ) console.log(checkWin());
     render();
 }
 
-function triggerMine() {
+function checkWin() {
+    for ( let i = 0; i < boardSize; i++ ) {
+        if ( mineTiles[i].join() !== (flagTiles[i]).join() ){
+            return false;
+        }
+    }
+    return true;
+}
 
+function triggerMine(tile) {
+    // playerWin = false;
+    const pos = getTilePos(tile);
+    destroyTiles(tile);
+}
+
+function destroyTiles(tile) {
+    if (tile.attr('class').split(' ').find(elem => elem === 'destroyed')) return;
+    tile.removeClass('hidden');
+    tile.removeClass('flagged');
+    tile.addClass('destroyed');
+    const pos = getTilePos(tile);
+    const row = pos[0], col = pos[1];
+    if ( board[row-1] ) {
+        destroyNextTile($(`.${row-1}-${col}`));
+    }
+    if ( board[row+1] ) {
+        destroyNextTile($(`.${row+1}-${col}`));
+    }
+    if ( board[row][col-1] ) {
+        destroyNextTile($(`.${row}-${col-1}`));
+    }
+    if ( board[row][col+1] ) {
+        destroyNextTile($(`.${row}-${col+1}`));
+    }
+}
+
+function destroyNextTile(tile) {
+    setTimeout(()=> {
+        destroyTiles(tile);
+    }, 100);
+}
+
+function getTilePos(tile) {
+    const tilePos = tile.attr('class').split(' ')[1].split('-');
+    const row = parseInt(tilePos[0]), col = parseInt(tilePos[1]);
+    return [row, col];
 }
 
 function render() {
