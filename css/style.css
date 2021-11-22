@@ -17,7 +17,6 @@ main {
 
 #board {
     display: grid;
-    border: solid 1px grey;
     height: 70vh;
     width: 70vh;
     margin: 0 auto;
@@ -34,10 +33,21 @@ main {
 }
 
 #numOfMines, #timer {
-    border: solid 1px grey;
+    text-align: center;
+    padding: 0 30px;
+}
+
+#replay {
+    background-image: url(../images/replay.png);
+    background-size: 0;
+    background-repeat: no-repeat;
+    background-position: center;
     height: 80px;   
     width: 150px;
+}
 
+#replay:hover {
+    background-color: #ccc;
 }
 
 #difficultyBtns {
@@ -56,6 +66,17 @@ main {
     border-radius: 5px;
 }
 
+#message {
+    display: none;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #eee;
+    padding: 10px;
+    border-radius: 5px;
+}
+
 .empty, .number, .open {
     border: solid 1px grey;
     background-color: #eee;
@@ -63,6 +84,10 @@ main {
     justify-content: center;
     align-items: center;
     font-size: 3;
+}
+
+#board div {
+    border-radius: 3px;
 }
 
 .mine {
@@ -90,7 +115,7 @@ main {
 }
 
 .open {
-    background-color: dodgerblue;
+    background-color: rgb(66, 245, 123);
 }
 
 .destroyed {

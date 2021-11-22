@@ -6,25 +6,27 @@ const boardLookup = {
         mines: 20,
     },
     normal: {
-        boardSize: 20,
-        mines: 100,
+        boardSize: 15,
+        mines: 50,
     },
     hard: {
-        boardSize: 30,
-        mines: 250,
+        boardSize: 20,
+        mines: 100,
     }
 }
 
 /*----- app's state (variables) -----*/
 // Define constants: board size, number of mines
-let board, playerWin, difficulty, numOfMines, boardSize, mineTiles, flagTiles, time;
+let board, gameOver, difficulty, numOfMines, boardSize, mineTiles, flagTiles, time;
 
 /*----- cached element references -----*/
-// Cached elements: timer, num of mines, board, message
+// Cached elements: timer, num of mines, board, message, replay
 const timer = $('#timer');
 const numOfMinesScreen = $('#numOfMines');
 const gameBoard = $('#board');
 const difficultyBtn = $('.difficultyBtn');
+const message = $('#message');
+const replay = $('#replay');
 
 /*----- event listeners -----*/
 // Event Listeners: click event on board, difficulty button
@@ -45,6 +47,10 @@ gameBoard.on('contextmenu', 'div', function() {
     return false;
 });
 
+replay.on('click', function() {
+    location.reload();
+})
+
 /*----- functions -----*/
 /*
 
@@ -60,6 +66,8 @@ gameBoard.on('contextmenu', 'div', function() {
 function init() {
     board = [];
     time = boardSize * boardSize * 2;
+    gameOver = false;
+    replay.css('backgroundSize', 'auto 100%');
     generateBoard(boardSize);
     generateBombs();
     generateNumberedTiles();
@@ -164,9 +172,10 @@ function addNumber(row, col) {
 
 function startTimer() {
     if ( time === 0 ) {
-
+        return;
     }
     setTimeout(() => {
+        if (gameOver) return;
         time--;
         updateTimer();
         startTimer();
@@ -257,16 +266,21 @@ function flagTile(tile) {
 function checkWin() {
     for ( let i = 0; i < boardSize; i++ ) {
         if ( mineTiles[i].join() !== (flagTiles[i]).join() ){
-            return false;
+            return;
         }
     }
-    return true;
+    message.css('display', 'block');
+    message.text('You Win!');
+    gameOver = true;
 }
 
 function triggerMine(tile) {
     // playerWin = false;
     const pos = getTilePos(tile);
+    gameOver = true;
     destroyTiles(tile);
+    message.css('display', 'block');
+    message.text('You Lose!');
 }
 
 function destroyTiles(tile) {
@@ -276,6 +290,7 @@ function destroyTiles(tile) {
     tile.addClass('destroyed');
     const pos = getTilePos(tile);
     const row = pos[0], col = pos[1];
+
     if ( board[row-1] ) {
         destroyNextTile($(`.${row-1}-${col}`));
     }
