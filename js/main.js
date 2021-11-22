@@ -37,7 +37,8 @@ difficultyBtn.on('click', function() {
 });
 
 gameBoard.on('click', 'div', function() {
-    $(this).removeClass('hidden');
+    // $(this).removeClass('hidden');
+    openTile($(this));
 })
 
 /*----- functions -----*/
@@ -107,7 +108,7 @@ function generateNumberedTiles() {
 }
 
 function addNumber(row, col) {
-    if ( board[row-1]) {
+    if ( board[row-1] ) {
         if ( board[row-1][col-1] && board[row-1][col-1] !== 'mine' ) 
             board[row-1][col-1] = parseInt(board[row-1][col-1]) + 1;
         
@@ -155,11 +156,49 @@ function renderBoard() {
 }
 
 function openTile(tile) {
-    if ( tile === 'mine' ) {
-        
+    if ( tile.length === 0 || tile.attr('class') === 'open' ) return;
+    const tileType = tile.attr('class').split(' ')[0];
+    const tilePos = tile.attr('class').split(' ')[1].split('-');
+    const row = parseInt(tilePos[0]), col = parseInt(tilePos[1]);
+    
+    if ( tileType === 'mine' ) {
+        triggerMine();
+    }
+
+    if ( tileType === 'empty' ) {
+        tileOpenHandler(tile);
+        openAdjacentTiles([row, col]);
+        return;
+    }
+    tileOpenHandler(tile);
+}
+
+function tileOpenHandler(tile) {
+    tile.removeClass('hidden');
+    tile.attr('class', 'open');
+}
+
+function openAdjacentTiles(pos) {
+    const row = pos[0], col = pos[1];
+
+    for ( let i = -1; i <= 1 ; i++ ) {
+        if ( board[row+i] ) {
+            for ( let j = -1; j<= 1; j++ ) {
+                if ( board[row+i][col+j] ) {
+                    const adjacentTile = $(`.${row+i}-${col+j}`);
+                    if( i !== 0 || j !== 0 && adjacentTile) {
+                        openTile(adjacentTile);
+                    }
+                }
+            }
+        }
     }
 }
 
-function render() {
+function triggerMine() {
 
+}
+
+function render() {
+    
 }
