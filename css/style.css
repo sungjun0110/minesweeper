@@ -44,16 +44,37 @@ main {
 
 }
 
-.empty, .mine, .number, .open {
+.empty, .number, .open {
     border: solid 1px grey;
     background-color: #eee;
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: 3;
+}
+
+.mine {
+    border: solid 1px grey;
+    background-color: #eee;
+    background-image: url('../images/mine.png');
+    background-size: 100%;
+    background-repeat: no-repeat;  
 }
 
 .hidden { 
+    display: flex;
+    justify-content: center;
+    align-items: center;
     font-size: 0;
+    background-size: 0;
+}
+
+.flagged {
+    border: solid 1px grey;
+    background-color: #eee;
+    background-image: url('../images/flag.png');
+    background-size: 100%;
+    background-repeat: no-repeat;  
 }
 
 .open {

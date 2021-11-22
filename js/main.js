@@ -22,7 +22,7 @@ let board, winner, difficulty, numOfMines, boardSize, mineTiles;
 /*----- cached element references -----*/
 // Cached elements: timer, num of mines, board, message
 const timer = $('#timer');
-const numOfMinesPanel = $('#numOfMines');
+const numOfMinesScreen = $('#numOfMines');
 const gameBoard = $('#board');
 const difficultyBtn = $('.difficultyBtn');
 
@@ -37,9 +37,13 @@ difficultyBtn.on('click', function() {
 });
 
 gameBoard.on('click', 'div', function() {
-    // $(this).removeClass('hidden');
     openTile($(this));
-})
+});
+
+gameBoard.on('contextmenu', 'div', function() {
+    flagTile($(this));
+    return false;
+});
 
 /*----- functions -----*/
 /*
@@ -58,6 +62,7 @@ function init() {
     generateBoard(boardSize);
     generateBombs();
     generateNumberedTiles();
+    updateNumberOfMines();
     renderBoard();
 }
 
@@ -68,6 +73,10 @@ function generateBoard(boardSize) {
             board[i].push([0]);
         }
     }
+}
+
+function updateNumberOfMines() {
+    numOfMinesScreen.text(numOfMines);
 }
 
 function generateBombs() {
@@ -145,7 +154,7 @@ function renderBoard() {
                 boardHTML += `<div class="empty ${i}-${j} hidden"></div>`;
 
             else if ( board[i][j] === 'mine' )
-                boardHTML += `<div class="mine ${i}-${j} hidden">M</div>`;
+                boardHTML += `<div class="mine ${i}-${j} hidden"></div>`;
 
             else
                 boardHTML += `<div class="number ${i}-${j} hidden">${board[i][j]}</div>`;
@@ -175,7 +184,7 @@ function openTile(tile) {
 
 function tileOpenHandler(tile) {
     tile.removeClass('hidden');
-    tile.attr('class', 'open');
+    tile.attr('class', tile.attr('class').split(' ')[0] + ' open');
 }
 
 function openAdjacentTiles(pos) {
@@ -195,10 +204,17 @@ function openAdjacentTiles(pos) {
     }
 }
 
+function flagTile(tile) {
+    if (tile.attr('class').split(' ')[1] === 'open') return;
+    tile.toggleClass('flagged');
+    numOfMines--;
+    render();   
+}
+
 function triggerMine() {
 
 }
 
 function render() {
-    
+    updateNumberOfMines();
 }
