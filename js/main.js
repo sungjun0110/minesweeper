@@ -17,7 +17,7 @@ const boardLookup = {
 
 /*----- app's state (variables) -----*/
 // Define constants: board size, number of mines
-let board, winner, difficulty, numOfMines, boardSize, mineTiles;
+let board, winner, difficulty, numOfMines, boardSize, mineTiles, flagTiles;
 
 /*----- cached element references -----*/
 // Cached elements: timer, num of mines, board, message
@@ -62,6 +62,7 @@ function init() {
     generateBoard(boardSize);
     generateBombs();
     generateNumberedTiles();
+    generateFlagTiles();
     updateNumberOfMines();
     renderBoard();
 }
@@ -104,6 +105,13 @@ function generateBombs() {
                 board[i][mineTiles[i][j]] = 'mine';
             }
         }
+    }
+}
+
+function generateFlagTiles() {
+    flagTiles = {};
+    for ( let i = 0; i < boardSize; i++ ){
+        flagTiles[i] = [];
     }
 }
 
@@ -165,10 +173,13 @@ function renderBoard() {
 }
 
 function openTile(tile) {
-    if ( tile.length === 0 || tile.attr('class') === 'open' ) return;
-    const tileType = tile.attr('class').split(' ')[0];
+    if ( tile.length === 0 ) return;
+    const tileClass = tile.attr('class').split(' ');
+    const tileType = tileClass[0];
     const tilePos = tile.attr('class').split(' ')[1].split('-');
     const row = parseInt(tilePos[0]), col = parseInt(tilePos[1]);
+    
+    if ( tileClass.find(elem => elem === 'open' || elem === 'flagged')) return;
     
     if ( tileType === 'mine' ) {
         triggerMine();
@@ -205,10 +216,22 @@ function openAdjacentTiles(pos) {
 }
 
 function flagTile(tile) {
-    if (tile.attr('class').split(' ')[1] === 'open') return;
+    const tileClass = tile.attr('class');
+    if ( tileClass.split(' ')[1] === 'open' ) return;
+    const tilePos = tileClass.split(' ')[1].split('-');
+    const row = parseInt(tilePos[0]), col = parseInt(tilePos[1]);
+    if ( flagTiles[row].find(elem => elem === col) ){
+        numOfMines++;
+        flagTiles[row] = flagTiles[row].filter(elem => {
+            return elem !== col;
+        });
+    }
+    else {
+        flagTiles[row].push(col);
+        numOfMines--;
+    }
     tile.toggleClass('flagged');
-    numOfMines--;
-    render();   
+    render();
 }
 
 function triggerMine() {
