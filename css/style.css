@@ -7,3 +7,55 @@ html, body {
     box-sizing: border-box;
     font-family: helvetica;
 }
+
+main {
+    height: 100vh;
+    width: 100vw;
+    text-align: center;
+}
+
+#board {
+    display: grid;
+    border: solid 1px grey;
+    height: 70vh;
+    width: 70vh;
+    margin: 0 auto;
+}
+
+#infobar {
+    width: 70vh;
+    height: 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 auto;
+
+}
+
+#numOfMines, #timer {
+    border: solid 1px grey;
+    height: 80px;   
+    width: 150px;
+
+}
+
+#difficultyBtns {
+    position: absolute;
+
+}
+
+#board div {
+    border: solid 1px grey;
+    background-color: #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hidden { 
+    font-size: 0;
+}
+
+#board div:hover {
+    background-color: #ccc;
+}

@@ -5,16 +5,25 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minesweeper</title>
+    <link rel='stylesheet' href="css/style.css">
     <script 
         src="https://code.jquery.com/jquery-3.6.0.min.js" 
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script defer src="js/main.js"></script>
 </head>
 <body>
-    <div id="info-bar">
-        <div id="noOfMines"></div>
-        <div id="timer"></div>
-    </div>
-    <div id="board"></div>
+    <main>
+        <h1>Minesweeper</h1>
+        <div id="difficultyBtns">
+            <button class="difficultyBtn">Easy</button>
+            <button class="difficultyBtn">Normal</button>
+            <button class="difficultyBtn">Hard</button>
+        </div>
+        <div id="infobar">
+            <div id="numOfMines"></div>
+            <div id="timer"></div>
+        </div>
+        <div id="board"></div>
+    </main>
 </body>
 </html>
