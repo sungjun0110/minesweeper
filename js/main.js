@@ -27,6 +27,7 @@ const gameBoard = $('#board');
 const difficultyBtn = $('.difficultyBtn');
 const message = $('#message');
 const replay = $('#replay');
+const howToPlay = $('#howToPlay');
 
 /*----- event listeners -----*/
 // Event Listeners: click event on board, difficulty button
@@ -75,6 +76,7 @@ function init(tile) {
     time = boardSize * boardSize * 2;
     gameOver = false;
     replay.css('display', 'block');
+    howToPlay.css('display', 'block');
     generateBoard(boardSize);
     updateNumberOfMines();
     updateTimer();

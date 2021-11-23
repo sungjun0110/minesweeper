@@ -95,6 +95,10 @@ main {
     border-radius: 3px;
 }
 
+#howToPlay {
+    display: none;
+}
+
 .mine {
     border: solid 1px grey;
     background-color: #eee;
