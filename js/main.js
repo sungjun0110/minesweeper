@@ -71,7 +71,7 @@ replay.on('click', function() {
 
 */
 
-function init(tile) {
+function init() {
     board = [];
     time = boardSize * boardSize * 2;
     gameOver = false;
@@ -192,7 +192,7 @@ function addNumber(row, col) {
 
 function startTimer() {
     if ( time === 0 ) {
-        return;
+        triggerMine($(`.${boardSize/2}-${boardSize/2}`));
     }
     setTimeout(() => {
         if (gameOver) return;
@@ -295,8 +295,6 @@ function checkWin() {
 }
 
 function triggerMine(tile) {
-    // playerWin = false;
-    const pos = getTilePos(tile);
     gameOver = true;
     destroyTiles(tile);
     message.css('display', 'block');
