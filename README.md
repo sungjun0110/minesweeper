@@ -39,7 +39,7 @@ CSS
 
 How to Play
 1. Left-click on a tile that you think it is a numbered tile.
-2. Right-click or ctrl-click to flag tile to mark a mine tile.
+2. Right-click or ctrl-click to a flag tile to mark a mine.
 3. Once you flag every mine tile, you win.
 
 
