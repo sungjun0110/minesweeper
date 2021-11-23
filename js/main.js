@@ -69,6 +69,7 @@ replay.on('click', function() {
     Generate numbered tiles — function 
     Check if tile is bomb — function
     Generate message if player wins - function
+    Destroy tiles once a mine is triggered -function
     Render the DOM — function
 
 */
