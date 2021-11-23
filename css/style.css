@@ -59,6 +59,7 @@ main {
     height: 50px;   
     width: 50px;
     border-radius: 50%;
+    transition: all .25s;
 }
 
 #replay:hover {
@@ -101,6 +102,7 @@ main {
 #board div {
     border-radius: 3px;
     user-select: none;
+    transition: all .25s;
 }
 
 #howToPlay {

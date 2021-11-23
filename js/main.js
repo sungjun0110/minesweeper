@@ -76,7 +76,7 @@ replay.on('click', function() {
 
 function init() {
     board = [];
-    time = boardSize * boardSize * 2;
+    time = boardSize * boardSize *2;
     gameOver = false;
     replay.css('display', 'block');
     howToPlay.css('display', 'block');
@@ -320,15 +320,9 @@ function destroyTiles(tile) {
     if ( board[row-1] ) {
         destroyNextTile($(`.${row-1}-${col}`));
     }
-    if ( board[row+1] ) {
-        destroyNextTile($(`.${row+1}-${col}`));
-    }
-    if ( board[row][col-1] ) {
-        destroyNextTile($(`.${row}-${col-1}`));
-    }
-    if ( board[row][col+1] ) {
-        destroyNextTile($(`.${row}-${col+1}`));
-    }
+    if ( board[row+1] ) destroyNextTile($(`.${row+1}-${col}`));
+    if ( board[row][col-1] ) destroyNextTile($(`.${row}-${col-1}`));
+    if ( board[row][col+1] ) destroyNextTile($(`.${row}-${col+1}`));
 }
 
 function destroyNextTile(tile) {
