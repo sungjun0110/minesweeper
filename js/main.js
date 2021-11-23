@@ -17,7 +17,7 @@ const boardLookup = {
 
 /*----- app's state (variables) -----*/
 // Define constants: board size, number of mines
-let board, gameOver, difficulty, numOfMines, boardSize, mineTiles, flagTiles, time;
+let board, gameOver, difficulty, numOfMines, boardSize, mineTiles, flagTiles, time, firstClick = true;
 
 /*----- cached element references -----*/
 // Cached elements: timer, num of mines, board, message, replay
@@ -38,7 +38,14 @@ difficultyBtn.on('click', function() {
     init();
 });
 
-gameBoard.on('click', 'div', function() {
+gameBoard.on('click', 'div', function(evt) {
+    if ( firstClick ) {
+        distributeMines($(this));
+        return;
+    }
+    if ( evt.ctrlKey ) {
+        flagTile($(this));
+    }
     openTile($(this));
 });
 
@@ -63,19 +70,27 @@ replay.on('click', function() {
 
 */
 
-function init() {
+function init(tile) {
     board = [];
     time = boardSize * boardSize * 2;
     gameOver = false;
-    replay.css('backgroundSize', 'auto 100%');
+    replay.css('display', 'block');
     generateBoard(boardSize);
-    generateBombs();
-    generateNumberedTiles();
-    generateFlagTiles();
     updateNumberOfMines();
     updateTimer();
     startTimer();
     renderBoard();
+}
+
+function distributeMines(tile) {
+    firstClick = false;
+    generateBombs(tile);
+    generateNumberedTiles();
+    generateFlagTiles();
+    renderBoard();
+    const pos = getTilePos(tile);
+    const newTile = $(`.${pos[0]}-${pos[1]}`);
+    openTile(newTile);
 }
 
 function generateBoard(boardSize) {
@@ -95,10 +110,11 @@ function updateTimer() {
     timer.text(time);
 }
 
-function generateBombs() {
+function generateBombs(tile) {
     mineTiles = {};
     let mineTilesLength = 0;
     let row, col;
+    const pos = getTilePos(tile);
 
     for ( let i = 0; i < boardSize; i++ ){
         mineTiles[i] = [];
@@ -106,13 +122,15 @@ function generateBombs() {
     while ( mineTilesLength < numOfMines ) {
         row = Math.floor(Math.random() * boardSize);
         col = Math.floor(Math.random() * boardSize);
-        if ( !mineTiles[row].some(num => num === col) ) {
-            mineTiles[row].push(col);
-            mineTiles[row].sort();
-        }
-        mineTilesLength = 0; 
-        for ( let i = 0; i < boardSize; i++ ) {
-            mineTilesLength += mineTiles[i].length;
+        if ( pos[0] !== row && pos[1] !== col ) {
+            if ( !mineTiles[row].some(num => num === col) ) {
+                mineTiles[row].push(col);
+                mineTiles[row].sort();
+            }
+            mineTilesLength = 0; 
+            for ( let i = 0; i < boardSize; i++ ) {
+                mineTilesLength += mineTiles[i].length;
+            }
         }
     }
     for ( let i = 0; i < boardSize; i++ ) {
@@ -244,7 +262,7 @@ function openAdjacentTiles(pos) {
 
 function flagTile(tile) {
     const tileClass = tile.attr('class');
-    if ( tileClass.split(' ')[1] === 'open' ) return;
+    if ( tileClass.split(' ').find(elem => elem === 'open') ) return;
     const pos = getTilePos(tile);
     const row = pos[0], col = pos[1];
     if ( flagTiles[row].find(elem => elem === col) ){
