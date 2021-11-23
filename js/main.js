@@ -28,6 +28,9 @@ const difficultyBtn = $('.difficultyBtn');
 const message = $('#message');
 const replay = $('#replay');
 const howToPlay = $('#howToPlay');
+const header = $('header');
+const difficultyBtns = $('#difficultyBtns');
+const infoBar = $('#infobar');
 
 /*----- event listeners -----*/
 // Event Listeners: click event on board, difficulty button
@@ -35,7 +38,6 @@ difficultyBtn.on('click', function() {
     difficulty = $(this).text().toLowerCase();
     numOfMines = boardLookup[difficulty].mines;
     boardSize = boardLookup[difficulty].boardSize;
-    $('#difficultyBtns').css('display', 'none');
     init();
 });
 
@@ -77,6 +79,11 @@ function init() {
     gameOver = false;
     replay.css('display', 'block');
     howToPlay.css('display', 'block');
+    difficultyBtns.css('display', 'none');
+    gameBoard.css('display', 'grid');
+    infoBar.css('display', 'flex');
+    header.css({'position': 'relative','top': '0%', 'transform': 'translate(-50%)'});
+
     generateBoard(boardSize);
     updateNumberOfMines();
     updateTimer();

@@ -13,17 +13,25 @@
 </head>
 <body>
     <main>
-        <h1>Minesweeper</h1>
-        <div id="difficultyBtns">
-            <button class="difficultyBtn">Easy</button>
-            <button class="difficultyBtn">Normal</button>
-            <button class="difficultyBtn">Hard</button>
-        </div>
+        <header>
+            <h1>Minesweeper</h1>
+            <div id="difficultyBtns">
+                <button class="difficultyBtn">Easy</button>
+                <button class="difficultyBtn">Normal</button>
+                <button class="difficultyBtn">Hard</button>
+            </div>
+        </header>
         <div id="message"></div>
         <div id="infobar">
-            <div id="numOfMines"></div>
+            <div class="infoDiv">
+                <p>Mines:&nbsp;</p>
+                <div id="numOfMines"></div>
+            </div>
             <div id="replay"></div>
-            <div id="timer"></div>
+            <div class="infoDiv">
+                <p>Time:&nbsp;</p>
+                <div id="timer"></div>
+            </div>
         </div>
         <div id="board"></div>
         <div id="howToPlay"><p>Open a tile: left-click on a tile<br>Flag a tile: control + click or right-click(tap with two fingers on a macbook!)</p></div>
