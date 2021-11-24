@@ -3,7 +3,7 @@
 const boardLookup = {
     easy: {
         boardSize: 10,
-        mines: 15,
+        mines: 20,
     },
     normal: {
         boardSize: 15,
@@ -30,7 +30,7 @@ const replay = $('#replay');
 const howToPlay = $('#howToPlay');
 const header = $('header');
 const difficultyBtns = $('#difficultyBtns');
-const infoBar = $('#infobar');
+const infobar = $('#infobar');
 
 /*----- event listeners -----*/
 // Event Listeners: click event on board, difficulty button
@@ -82,7 +82,7 @@ function init() {
     howToPlay.css('display', 'block');
     difficultyBtns.css('display', 'none');
     gameBoard.css('display', 'grid');
-    infoBar.css('display', 'flex');
+    infobar.css('display', 'flex');
     header.css({'position': 'relative','top': '0%', 'transform': 'translate(-50%)'});
 
     generateBoard(boardSize);
@@ -223,6 +223,7 @@ function openTile(tile) {
         openAdjacentTiles(pos);
         return;
     }
+
     tileOpenHandler(tile);
 }
 
@@ -253,7 +254,7 @@ function flagTile(tile) {
     if ( tileClass.split(' ').find(elem => elem === 'open') ) return;
     const pos = getTilePos(tile);
     const row = pos[0], col = pos[1];
-    if ( flagTiles[row].find(elem => elem === col) ){
+    if ( flagTiles[row].some(elem => elem === col) ){
         numOfMines++;
         flagTiles[row] = flagTiles[row].filter(elem => {
             return elem !== col;
