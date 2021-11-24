@@ -3,7 +3,7 @@
 const boardLookup = {
     easy: {
         boardSize: 10,
-        mines: 20,
+        mines: 15,
     },
     normal: {
         boardSize: 15,
@@ -126,13 +126,12 @@ function generateBombs(tile) {
     let row, col;
     const pos = getTilePos(tile);
 
-    for ( let i = 0; i < boardSize; i++ ){
-        mineTiles[i] = [];
-    }
+    for ( let i = 0; i < boardSize; i++ ) mineTiles[i] = [];
+
     while ( mineTilesLength < numOfMines ) {
         row = Math.floor(Math.random() * boardSize);
         col = Math.floor(Math.random() * boardSize);
-        if ( pos[0] !== row && pos[1] !== col ) {
+        if ( pos[0] !== row || pos[1] !== col ) {
             if ( !mineTiles[row].some(num => num === col) ) {
                 mineTiles[row].push(col);
                 mineTiles[row].sort();
@@ -159,7 +158,6 @@ function generateFlagTiles() {
     }
 }
 
-// [-1,-1], [-1, 0], [-1, +1], [0, -1], [0, +1], [+1, -1], [+1, 0], [+1, +1]
 function generateNumberedTiles() {
     for ( let row = 0; row < boardSize; row++ ) {
         mineTiles[row].forEach(col => {
@@ -168,33 +166,16 @@ function generateNumberedTiles() {
     }
 }
 
+// [-1,-1] = top left, [-1, 0] = top, [-1, +1] = top right, [0, -1] = left, [0, +1] = right, [+1, -1] = bottom left, [+1, 0] = bottom, [+1, +1] = bottom right
 function addNumber(row, col) {
-    if ( board[row-1] ) {
-        if ( board[row-1][col-1] && board[row-1][col-1] !== 'mine' ) 
-            board[row-1][col-1] = parseInt(board[row-1][col-1]) + 1;
-        
-        if ( board[row-1][col] !== 'mine' ) 
-            board[row-1][col] = parseInt(board[row-1][col]) + 1;
-
-        if ( board[row-1][col+1] && board[row-1][col+1] !== 'mine') 
-            board[row-1][col+1] = parseInt(board[row-1][col+1]) + 1;
-    }
-
-    if ( board[row][col-1] && board[row][col-1] !== 'mine' ) 
-        board[row][col-1] = parseInt(board[row][col-1]) + 1;
-    
-    if ( board[row][col+1] && board[row][col+1] !== 'mine' )
-        board[row][col+1] = parseInt(board[row][col+1]) + 1;
-    
-    if ( board[row+1] ) {
-        if ( board[row+1][col-1] && board[row+1][col-1] !== 'mine' )
-            board[row+1][col-1] = parseInt(board[row+1][col-1]) + 1;
-        
-        if ( board[row+1][col] !== 'mine' )
-            board[row+1][col] = parseInt(board[row+1][col]) + 1;
-        
-        if ( board[row+1][col+1] && board[row+1][col+1] !== 'mine' )
-            board[row+1][col+1] = parseInt(board[row+1][col+1]) + 1;
+    for ( let i = -1; i <= 1 ; i++ ) {
+        if ( board[row+i] ) {
+            for ( let j = -1; j <= 1; j++ ) {
+                if ( board[row+i][col+j] && board[row+i][col+j] !== 'mine' ) {
+                    board[row+i][col+j] = parseInt(board[row+i][col+j]) + 1;
+                }
+            }
+        }
     }
 }
 
@@ -229,16 +210,13 @@ function renderBoard() {
 }
 
 function openTile(tile) {
-    if ( tile.length === 0 ) return;
     const tileClass = tile.attr('class').split(' ');
     const tileType = tileClass[0];
     const pos = getTilePos(tile);
     
     if ( tileClass.find(elem => elem === 'open' || elem === 'flagged')) return;
     
-    if ( tileType === 'mine' ) {
-        triggerMine(tile);
-    }
+    if ( tileType === 'mine' ) triggerMine(tile);
 
     if ( tileType === 'empty' ) {
         tileOpenHandler(tile);
@@ -258,7 +236,7 @@ function openAdjacentTiles(pos) {
 
     for ( let i = -1; i <= 1 ; i++ ) {
         if ( board[row+i] ) {
-            for ( let j = -1; j<= 1; j++ ) {
+            for ( let j = -1; j <= 1; j++ ) {
                 if ( board[row+i][col+j] ) {
                     const adjacentTile = $(`.${row+i}-${col+j}`);
                     if( i !== 0 || j !== 0 && adjacentTile) {
@@ -297,7 +275,7 @@ function checkWin() {
             return;
         }
     }
-    message.css('display', 'block');
+    message.css('transform', 'translate(-50%, -50%) scale(1, 1)');
     message.text('You Win!');
     gameOver = true;
 }
@@ -305,21 +283,23 @@ function checkWin() {
 function triggerMine(tile) {
     gameOver = true;
     destroyTiles(tile);
-    message.css('display', 'block');
-    message.text('You Lose!');
+    setTimeout(() => {
+        message.css('transform', 'translate(-50%, -50%) scale(1, 1)');
+        message.text('You Lose!');
+    }, 1000);
 }
 
 function destroyTiles(tile) {
     if (tile.attr('class').split(' ').find(elem => elem === 'destroyed')) return;
+
     tile.removeClass('hidden');
     tile.removeClass('flagged');
     tile.addClass('destroyed');
+
     const pos = getTilePos(tile);
     const row = pos[0], col = pos[1];
 
-    if ( board[row-1] ) {
-        destroyNextTile($(`.${row-1}-${col}`));
-    }
+    if ( board[row-1] ) destroyNextTile($(`.${row-1}-${col}`));
     if ( board[row+1] ) destroyNextTile($(`.${row+1}-${col}`));
     if ( board[row][col-1] ) destroyNextTile($(`.${row}-${col-1}`));
     if ( board[row][col+1] ) destroyNextTile($(`.${row}-${col+1}`));

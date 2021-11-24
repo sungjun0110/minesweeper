@@ -80,14 +80,14 @@ main {
 }
 
 #message {
-    display: none;
     position: absolute;
     left: 50%;
     top: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(0, 0);
     background-color: #eee;
     padding: 10px;
     border-radius: 5px;
+    transition: all 0.5s;
 }
 
 .empty, .number, .open {
@@ -102,7 +102,6 @@ main {
 #board div {
     border-radius: 3px;
     user-select: none;
-    transition: all .25s;
 }
 
 #howToPlay {
@@ -114,7 +113,8 @@ main {
     background-color: #eee;
     background-image: url('../images/mine.png');
     background-size: 100%;
-    background-repeat: no-repeat;  
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .hidden { 
@@ -131,14 +131,18 @@ main {
     background-image: url('../images/flag.png');
     background-size: 100%;
     background-repeat: no-repeat;  
+    background-position: center;
+    transition: none;
 }
 
 .open {
     background-color: rgb(66, 245, 123);
+    transition: all .25s;
 }
 
 .destroyed {
     background-color: red;
+    transition: all .25s;
 }
 
 #board div:hover {
