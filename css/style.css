@@ -13,10 +13,12 @@ header {
     left: 50%;
     top: 45%;
     transform: translate(-50%, -50%);
+    transition: all 0.5s ease-in-out;
 }
 
 h1 {
     font-size: 40px;
+    margin: 10px;
 }
 
 main {
@@ -24,6 +26,11 @@ main {
     width: 100vw;
     text-align: center;
     position: relative;
+}
+
+section {
+    opacity: 0;
+    transition: all 0.7s ease-in;
 }
 
 #board {
@@ -35,7 +42,7 @@ main {
 
 #infobar {
     width: 70vh;
-    height: 80px;
+    height: 70px;
     display: none;
     justify-content: space-between;
     align-items: center;
@@ -52,6 +59,7 @@ main {
     justify-content: center;
     align-items: center;
     text-align: center;
+    width: 80px;
 }
 
 #replay {
@@ -71,12 +79,16 @@ main {
     transform: rotate(360deg);
 }
 
+#difficultyBtns {
+    margin-top: 50px;
+}
+
 .difficultyBtn {
     height: 70px;
     width: 150px;
     font-size: 20px;
     border: 1px solid grey;
-    transition: all 0.5s ease-in-out;
+    transition: all 0.25s ease-in-out;
     border-radius: 5px;
 }
 

@@ -31,6 +31,7 @@ const howToPlay = $('#howToPlay');
 const header = $('header');
 const difficultyBtns = $('#difficultyBtns');
 const infobar = $('#infobar');
+const section = $('section');
 
 /*----- event listeners -----*/
 // Event Listeners: click event on board, difficulty button
@@ -84,6 +85,7 @@ function init() {
     gameBoard.css('display', 'grid');
     infobar.css('display', 'flex');
     header.css({'position': 'relative','top': '0%', 'transform': 'translate(-50%)'});
+    section.css('opacity', '1');
 
     generateBoard(boardSize);
     updateNumberOfMines();
