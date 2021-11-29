@@ -5,7 +5,7 @@ html, body {
 
 * {
     box-sizing: border-box;
-    font-family: helvetica;
+    font-family: 'Comfortaa', cursive;
 }
 
 header {
@@ -13,6 +13,10 @@ header {
     left: 50%;
     top: 45%;
     transform: translate(-50%, -50%);
+}
+
+h1 {
+    font-size: 40px;
 }
 
 main {
@@ -64,15 +68,42 @@ main {
 
 #replay:hover {
     background-color: #ccc;
+    transform: rotate(360deg);
 }
 
 .difficultyBtn {
-    background-color: #eee;
     height: 70px;
     width: 150px;
     font-size: 20px;
     border: 1px solid grey;
+    transition: all 0.5s ease-in-out;
     border-radius: 5px;
+}
+
+#easyBtn {
+    background-color: rgb(66, 245, 123);
+}
+#easyBtn:hover {
+    background-color: rgb(52, 153, 84);
+    color: #eee;
+}
+
+#normalBtn {
+    background-color: #eee;
+}
+
+#normalBtn:hover {
+    background-color: #7c7c7c;
+    color: #eee;
+}
+
+#hardBtn {
+    background-color: red;
+}
+
+#hardBtn:hover {
+    background-color: rgb(160, 0, 0);
+    color: white;
 }
 
 .difficultyBtn:hover {
