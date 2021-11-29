@@ -42,6 +42,9 @@ How to Play
 2. Right-click or ctrl-click to a flag tile to mark a mine.
 3. Once you flag every mine tile, you win.
 
+Rule
+1. The numbers on numbered tiles represent how many mines are planted around the tile.
+
 
 ### Future Enhancements
 
