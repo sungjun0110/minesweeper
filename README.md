@@ -7,7 +7,7 @@
 
 
 
-### Screenshots
+## Screenshots
 
 <img src="https://imgur.com/cL6EPKd.png" width="450px">
 There are 3 difficulty levels.
@@ -22,7 +22,7 @@ Once a difficulty level is chosen, it generates a game board for the correspondi
 
 <img src="https://i.imgur.com/2urgfsK.png" width="450px">
 
-### Technologies
+## Technologies
 
 Javascript
 
@@ -33,7 +33,7 @@ HTML
 CSS
 
 
-### Getting Started
+## Getting Started
 
 [Link to Minesweeper](https://sungjun0110.github.io/minesweeper/)
 
@@ -46,6 +46,6 @@ Rule
 1. The first tile you open must be a numbered tile.
 2. The numbers on numbered tiles represent how many mines are planted around the tile.
 
-### Future Enhancements
+## Future Enhancements
 
 A custom size board may be a great enhancement for players who would like to challenge.
