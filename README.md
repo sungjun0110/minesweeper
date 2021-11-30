@@ -48,4 +48,4 @@ Rule
 
 ### Future Enhancements
 
-A custom size board may be a great option for players who would like to cha
+A custom size board may be a great enhancement for players who would like to challenge.
