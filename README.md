@@ -43,8 +43,9 @@ How to Play
 3. Once you flag every mine tile, you win.
 
 Rule
-1. The numbers on numbered tiles represent how many mines are planted around the tile.
-
+1. The first tile you open must be a numbered tile.
+2. The numbers on numbered tiles represent how many mines are planted around the tile.
 
 ### Future Enhancements
 
+A custom size board may be a great option for players who would like to cha
