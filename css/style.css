@@ -33,21 +33,24 @@ section {
     transition: all 0.7s ease-in;
 }
 
-#board {
+#gameScreen {
     display: none;
+}
+
+#board {
+    display: grid;
     height: 70vh;
     width: 70vh;
     margin: 0 auto;
 }
 
 #infobar {
+    display: flex;
     width: 70vh;
     height: 70px;
-    display: none;
     justify-content: space-between;
     align-items: center;
     margin: 0 auto;
-
 }
 
 .infoDiv {
@@ -63,7 +66,7 @@ section {
 }
 
 #replay {
-    display: none;
+    display: block;
     background-image: url(../images/replay.png);
     background-repeat: no-repeat;
     background-position: center;
@@ -145,10 +148,6 @@ section {
 #board div {
     border-radius: 3px;
     user-select: none;
-}
-
-#howToPlay {
-    display: none;
 }
 
 .mine {

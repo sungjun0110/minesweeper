@@ -16,25 +16,24 @@ const boardLookup = {
 }
 
 /*----- app's state (variables) -----*/
-// Define constants: board size, number of mines
-let board, gameOver, difficulty, numOfMines, boardSize, mineTiles, flagTiles, time, firstClick = true;
+// Define constants: board size, number of mines, difficulty, mine tiles, flag tiles
+let board, difficulty, numOfMines, boardSize, mineTiles, flagTiles, time, gameOver = false, firstClick = true;
 
 /*----- cached element references -----*/
-// Cached elements: timer, num of mines, board, message, replay
+// Cached elements: timer, num of mines, board, message, replay, difficulty buttons
 const timer = $('#timer');
+const gameScreen = $('#gameScreen');
 const numOfMinesScreen = $('#numOfMines');
 const gameBoard = $('#board');
 const difficultyBtn = $('.difficultyBtn');
 const message = $('#message');
 const replay = $('#replay');
-const howToPlay = $('#howToPlay');
 const header = $('header');
 const difficultyBtns = $('#difficultyBtns');
-const infobar = $('#infobar');
 const section = $('section');
 
 /*----- event listeners -----*/
-// Event Listeners: click event on board, difficulty button
+// Event Listeners: click event on board, difficulty button, generate gameboard, 
 difficultyBtn.on('click', function() {
     difficulty = $(this).text().toLowerCase();
     numOfMines = boardLookup[difficulty].mines;
@@ -47,10 +46,10 @@ gameBoard.on('click', 'div', function(evt) {
         distributeMines($(this));
         return;
     }
-    if ( evt.ctrlKey ) {
-        flagTile($(this));
-    }
-    openTile($(this));
+
+    // to flag a tile with ctrl+click
+    if ( evt.ctrlKey ) flagTile($(this));
+    else openTile($(this));
 });
 
 gameBoard.on('contextmenu', 'div', function() {
@@ -77,124 +76,27 @@ replay.on('click', function() {
 
 function init() {
     board = [];
-    time = boardSize * boardSize *2;
-    gameOver = false;
-    replay.css('display', 'block');
-    howToPlay.css('display', 'block');
-    difficultyBtns.css('display', 'none');
-    gameBoard.css('display', 'grid');
-    infobar.css('display', 'flex');
-    header.css({'position': 'relative','top': '0%', 'transform': 'translate(-50%)'});
-    section.css('opacity', '1');
+    time = boardSize * boardSize * 2;
 
     generateBoard(boardSize);
+    renderBoard();
+    fadeInBoard();
     updateNumberOfMines();
     updateTimer();
     startTimer();
-    renderBoard();
-}
-
-function distributeMines(tile) {
-    firstClick = false;
-    generateBombs(tile);
-    generateNumberedTiles();
-    generateFlagTiles();
-    renderBoard();
-    const pos = getTilePos(tile);
-    const newTile = $(`.${pos[0]}-${pos[1]}`);
-    openTile(newTile);
 }
 
 function generateBoard(boardSize) {
     for ( let i = 0; i < boardSize; i++ ) {
         board.push([]);
-        for ( let j = 0; j < boardSize; j++ ) {
+        for ( let j = 0; j < boardSize; j++ ) 
             board[i].push([0]);
-        }
     }
-}
-
-function updateNumberOfMines() {
-    numOfMinesScreen.text(numOfMines);
-}
-
-function updateTimer() {
-    timer.text(time);
-}
-
-function generateBombs(tile) {
-    mineTiles = {};
-    let mineTilesLength = 0;
-    let row, col;
-    const pos = getTilePos(tile);
-
-    for ( let i = 0; i < boardSize; i++ ) mineTiles[i] = [];
-
-    while ( mineTilesLength < numOfMines ) {
-        row = Math.floor(Math.random() * boardSize);
-        col = Math.floor(Math.random() * boardSize);
-        if ( pos[0] !== row || pos[1] !== col ) {
-            if ( !mineTiles[row].some(num => num === col) ) {
-                mineTiles[row].push(col);
-                mineTiles[row].sort();
-            }
-            mineTilesLength = 0; 
-            for ( let i = 0; i < boardSize; i++ ) {
-                mineTilesLength += mineTiles[i].length;
-            }
-        }
-    }
-    for ( let i = 0; i < boardSize; i++ ) {
-        if ( mineTiles[i].length > 0 ) {
-            for ( let j = 0; j < mineTiles[i].length; j++ ) {
-                board[i][mineTiles[i][j]] = 'mine';
-            }
-        }
-    }
-}
-
-function generateFlagTiles() {
-    flagTiles = {};
-    for ( let i = 0; i < boardSize; i++ ){
-        flagTiles[i] = [];
-    }
-}
-
-function generateNumberedTiles() {
-    for ( let row = 0; row < boardSize; row++ ) {
-        mineTiles[row].forEach(col => {
-            addNumber(row, col);
-        });
-    }
-}
-
-// [-1,-1] = top left, [-1, 0] = top, [-1, +1] = top right, [0, -1] = left, [0, +1] = right, [+1, -1] = bottom left, [+1, 0] = bottom, [+1, +1] = bottom right
-function addNumber(row, col) {
-    for ( let i = -1; i <= 1 ; i++ ) {
-        if ( board[row+i] ) {
-            for ( let j = -1; j <= 1; j++ ) {
-                if ( board[row+i][col+j] && board[row+i][col+j] !== 'mine' ) {
-                    board[row+i][col+j] = parseInt(board[row+i][col+j]) + 1;
-                }
-            }
-        }
-    }
-}
-
-function startTimer() {
-    if ( time === 0 ) {
-        triggerMine($(`.${boardSize/2}-${boardSize/2}`));
-    }
-    setTimeout(() => {
-        if (gameOver) return;
-        time--;
-        updateTimer();
-        startTimer();
-    }, 1000);
 }
 
 function renderBoard() {
     let boardHTML = '';
+
     for ( let i = 0; i < boardSize; i++ ) {
         for ( let j = 0; j < boardSize; j++ ) {
             if ( board[i][j] == 0 )
@@ -207,8 +109,104 @@ function renderBoard() {
                 boardHTML += `<div class="number ${i}-${j} hidden">${board[i][j]}</div>`;
         }
     }
-    gameBoard.html(boardHTML);
+    
     gameBoard.css({'gridTemplateColumns': `repeat(${boardSize}, 1fr)`, 'gridTemplateRows': `repeat(${boardSize}, 1fr)`});
+    gameBoard.html(boardHTML);
+}
+
+function fadeInBoard() {
+    // adds fade-in effect when generating the gamebaord
+    gameScreen.css('display', 'block');
+    difficultyBtns.css('display', 'none');
+    header.css({'position': 'relative', 'top': '0%', 'transform': 'translate(-50%)'});
+    section.css('opacity', '1');
+}
+
+function updateNumberOfMines() {
+    numOfMinesScreen.text(numOfMines);
+}
+
+function updateTimer() {
+    timer.text(time);
+}
+
+function startTimer() {
+    if ( time === 0 ) triggerMine($(`.${boardSize/2}-${boardSize/2}`));
+
+    setTimeout(() => {
+        if (gameOver) return;
+        time--;
+        updateTimer();
+        startTimer();
+    }, 1000);
+}
+
+function distributeMines(tile) {
+    firstClick = false;
+    const pos = getTilePos(tile);
+    generateBombs(tile);
+    generateNumberedTiles();
+    generateFlagTiles();
+    renderBoard();
+    openTile($(`.${pos[0]}-${pos[1]}`));
+}
+
+function generateBombs(tile) {
+    mineTiles = {};
+    let mineCounter = 0;
+    let row, col;
+    const pos = getTilePos(tile);
+
+    for ( let i = 0; i < boardSize; i++ ) 
+        mineTiles[i] = [];
+
+    while ( mineCounter < numOfMines ) {
+        row = Math.floor(Math.random() * boardSize);
+        col = Math.floor(Math.random() * boardSize);
+        
+        if ( mineTiles[row].some(tile => tile === col) ) continue;
+
+        if ( pos[0] !== row || pos[1] !== col ) {
+            if ( !mineTiles[row].some(num => num === col) ) {
+                mineTiles[row].push(col);
+                mineTiles[row].sort();
+                mineCounter++;
+            }
+        }
+    }
+
+    for ( let i = 0; i < boardSize; i++ ) {
+        if ( mineTiles[i].length > 0 ) {
+            for ( let j = 0; j < mineTiles[i].length; j++ ) 
+                board[i][mineTiles[i][j]] = 'mine';
+        }
+    }
+}
+
+function generateFlagTiles() {
+    flagTiles = {};
+    for ( let i = 0; i < boardSize; i++ )
+        flagTiles[i] = [];
+}
+
+function generateNumberedTiles() {
+    for ( let row = 0; row < boardSize; row++ ) 
+        mineTiles[row].forEach(col => addNumber(row, col));
+}
+
+// [-1,-1] = top left,     [-1, 0] = top,    [-1, +1] = top right, 
+// [0, -1] = left,         [0, 0] = center,  [0, +1] = right, 
+// [+1, -1] = bottom left, [+1, 0] = bottom, [+1, +1] = bottom right
+// -> center tile is always a mine tile
+function addNumber(row, col) {
+    for ( let i = -1; i <= 1 ; i++ ) {
+        if ( board[row+i] ) {
+            for ( let j = -1; j <= 1; j++ ) {
+                if ( board[row+i][col+j] && board[row+i][col+j] !== 'mine' ) 
+                    board[row+i][col+j] = parseInt(board[row+i][col+j]) + 1;
+            }
+        }
+    }
 }
 
 function openTile(tile) {
@@ -218,7 +216,8 @@ function openTile(tile) {
     
     if ( tileClass.find(elem => elem === 'open' || elem === 'flagged')) return;
     
-    if ( tileType === 'mine' ) triggerMine(tile);
+    if ( tileType === 'mine' ) 
+        triggerMine(tile);
 
     if ( tileType === 'empty' ) {
         tileOpenHandler(tile);
@@ -242,9 +241,8 @@ function openAdjacentTiles(pos) {
             for ( let j = -1; j <= 1; j++ ) {
                 if ( board[row+i][col+j] ) {
                     const adjacentTile = $(`.${row+i}-${col+j}`);
-                    if( i !== 0 || j !== 0 && adjacentTile) {
+                    if( i !== 0 || j !== 0 && adjacentTile) 
                         openTile(adjacentTile);
-                    }
                 }
             }
         }
@@ -256,20 +254,21 @@ function flagTile(tile) {
     if ( tileClass.split(' ').find(elem => elem === 'open') ) return;
     const pos = getTilePos(tile);
     const row = pos[0], col = pos[1];
+
     if ( flagTiles[row].some(elem => elem === col) ){
         numOfMines++;
         flagTiles[row] = flagTiles[row].filter(elem => {
             return elem !== col;
         });
-    }
-    else {
+    } else {
         flagTiles[row].push(col);
         flagTiles[row].sort();
         numOfMines--;
     }
+
     tile.toggleClass('flagged');
-    if ( numOfMines === 0 ) console.log(checkWin());
-    render();
+    updateNumberOfMines();
+    if ( numOfMines === 0 ) checkWin();
 }
 
 function checkWin() {
@@ -318,8 +317,4 @@ function getTilePos(tile) {
     const tilePos = tile.attr('class').split(' ')[1].split('-');
     const row = parseInt(tilePos[0]), col = parseInt(tilePos[1]);
     return [row, col];
-}
-
-function render() {
-    updateNumberOfMines();
 }
